@@ -167,16 +167,3 @@ Navigate to `http://localhost:5173` in your web browser.
 
 ---
 
-## 7. Key Architecture & Viva Questions
-
-### Q1: How is access control enforced for course materials and quizzes?
-**Answer**: Access control is enforced at both the React UI layer and the Express backend API layer. The backend queries the `enrollments` table before returning materials or allowing quiz access. If a student is not actively enrolled in the course, the API strictly returns an HTTP `403 Forbidden` status code.
-
-### Q2: How is course progress calculated?
-**Answer**: Progress is computed using actual database records in MySQL. It counts the number of completed items for the student from `student_progress` where `is_completed = 1` and divides it by the total count of `learning_materials` for that course. No mock or hardcoded percentages are used.
-
-### Q3: How are quiz scores evaluated?
-**Answer**: Quiz scores are calculated entirely on the server. When a student submits their selected options, the backend pulls the question records, checks the correct options, totals the points, computes the percentage, and determines whether the student passed based on `passing_marks`. React is never trusted with score calculation.
-
-### Q4: How is teacher ownership protected?
-**Answer**: Each course management, syllabus edit, and quiz creation route queries the `courses` table to verify that `course.teacher_id === req.user.user_id`. If a teacher tries to edit another teacher's course, the backend rejects the request with HTTP `403 Forbidden`.
